@@ -16,6 +16,22 @@ from typing import List, Optional
 
 load_dotenv()
 
+from llama_index.core import set_global_handler
+
+# Initialize Observability (Langfuse)
+if os.getenv("LANGFUSE_SECRET_KEY"):
+    try:
+        set_global_handler("langfuse", 
+            secret_key=os.getenv("LANGFUSE_SECRET_KEY"),
+            public_key=os.getenv("LANGFUSE_PUBLIC_KEY"),
+            host=os.getenv("LANGFUSE_HOST")
+        )
+        print("--- Langfuse Observability Enabled (Callback Mode) ---")
+    except ImportError:
+        print("Warning: 'llama-index-callbacks-langfuse' not installed.")
+    except Exception as e:
+        print(f"Warning: Failed to init Langfuse: {e}")
+
 PINECONE_API_KEY = os.getenv("PINECONE-API-KEY")
 COHERE_API_KEY = os.getenv("COHERE_API_KEY")
 INDEX_NAME = "modern-sage"

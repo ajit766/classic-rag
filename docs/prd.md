@@ -57,4 +57,5 @@ The AI response enforces a rigid structure:
 -   **Embeddings**: OpenAI `text-embedding-3-small` (1536 dims).
 -   **Vector DB**: Pinecone Serverless (us-east-1).
 -   **Re-ranking**: Cohere Re-rank v3 (Filtering).
+-   **Observability**: Langfuse (Tracing & Evaluation).
 

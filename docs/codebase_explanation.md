@@ -51,6 +51,16 @@ We refine the broad pool of 30 chunks down to the absolute best ones.
     1.  **Spiritual Perspective**: Required 2-3 citations (e.g., *Bhagavad Gita*).
     2.  **Scientific Perspective**: Required 3-4 citations (e.g., *Atomic Habits*, *Ikigai*).
 
+    2.  **Scientific Perspective**: Required 3-4 citations (e.g., *Atomic Habits*, *Ikigai*).
+
+#### D. Observability (Langfuse)
+*   **Integration**: We use `set_global_handler("langfuse")` to automatically trace execution.
+*   **Triggers**: If `LANGFUSE_SECRET_KEY` is present in `.env`, it auto-enables.
+*   **Captures**:
+    *   Full usage traces (User Query -> Retrieval -> Rerank -> LLM).
+    *   Latency breakdowns for each step.
+    *   Input/Output payloads for debugging.
+
 ---
 
 ## 3. Backend: API Server (`backend/main.py`)

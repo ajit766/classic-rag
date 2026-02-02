@@ -19,6 +19,7 @@ graph TD
         Pinecone[(Pinecone Serverless DB)]
         Cohere[Cohere API]
         OpenAI[OpenAI GPT-4o]
+        Langfuse[Langfuse Observability]
     end
 
     %% Interactions

@@ -49,6 +49,9 @@ Instead of hardcoding the URL, use an environment variable or a relative path if
     *   `PINECONE-API-KEY`: `pc-...`
     *   `COHERE_API_KEY`: `...`
     *   `PINECONE_ENV`: `us-east-1` (or whatever your env is)
+    *   `LANGFUSE_SECRET_KEY`: `sk-lf-...`
+    *   `LANGFUSE_PUBLIC_KEY`: `pk-lf-...`
+    *   `LANGFUSE_HOST`: `https://cloud.langfuse.com`
 7.  Click **Create Web Service**.
 
 *Note: Free tier spins down after 15 minutes of inactivity. The first request might take 50 seconds to wake it up.*
