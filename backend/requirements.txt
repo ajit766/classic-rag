@@ -3,5 +3,9 @@ uvicorn
 python-dotenv
 llama-index
 llama-index-vector-stores-pinecone
-llama-index-llms-openai
+pinecone
+python-dotenv
+fastapi
+uvicorn
+llama-index-postprocessor-cohere-rerank
 llama-index-embeddings-openai
