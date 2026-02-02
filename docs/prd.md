@@ -27,11 +27,34 @@ The goal is to offer users a balanced perspective—practical, actionable steps 
 ### 3.3. Response Structure (Strict V2)
 The AI response enforces a rigid structure:
 1.  **The Spiritual Perspective (Ancient Wisdom)**:
-    -   Must cite relevant  *The Bhagavad Gita* (2-3 citations).
+    -   Must cite *The Bhagavad Gita* (2-3 citations).
+    -   Focus: Dharma, Detachment, Inner Peace.
 2.  **The Scientific Perspective (Modern Strategy)**:
-    -   Must cite relevant  Modern Texts (3-4 citations).
+    -   Must cite Modern Texts (3-4 citations).
+    -   Focus: Psychology, Habit Loops, Decision Making.
 
 ## 4. Success Metrics
 -   **Citation Accuracy**: 100% of claims must have an inline citation `[Source: Book, Ch X]`.
 -   **Recall**: The system must retrieve relevant chunks even for abstract queries (via Semantic Chunking & Query Fusion).
 -   **Performance**: <4s time-to-first-token (achieved via Pinecone Serverless).
+
+## 5. Technical Stack & Requirements
+
+### 5.1. Frontend Scope
+-   **Framework**: Next.js 14+ (App Router).
+-   **Styling**: Tailwind CSS (Shadcn/UI aesthetics).
+-   **State**: React Hooks + Vercel AI SDK (`useChat`).
+-   **Deployment**: Vercel (CI/CD via GitHub).
+
+### 5.2. Backend Scope
+-   **Language**: Python 3.10+.
+-   **Framework**: FastAPI (Async support).
+-   **Orchestration**: LlamaIndex (RAG Logic, Node Parsing).
+-   **Deployment**: Render.com (Web Service, auto-deploy).
+
+### 5.3. AI & Data Infrastructure
+-   **LLM**: OpenAI GPT-4o (Reasoning & Synthesis).
+-   **Embeddings**: OpenAI `text-embedding-3-small` (1536 dims).
+-   **Vector DB**: Pinecone Serverless (us-east-1).
+-   **Re-ranking**: Cohere Re-rank v3 (Filtering).
+
