@@ -10,6 +10,9 @@ from pinecone import Pinecone
 from llama_index.core.memory import ChatMemoryBuffer
 from llama_index.llms.openai import OpenAI
 from llama_index.postprocessor.cohere_rerank import CohereRerank
+from llama_index.core.postprocessor.types import BaseNodePostprocessor
+from llama_index.core.schema import NodeWithScore
+from typing import List, Optional
 
 load_dotenv()
 
@@ -24,37 +27,56 @@ You have access to a library containing books like 'Atomic Habits', 'Thinking, F
 **YOUR GOAL**:
 Answer the user's question by synthesizing insights from the provided Book Context.
 
+**STRUCTURED RESPONSE FORMAT**:
+You must structure your answer into two distinct sections:
+
+### 1. The Spiritual Perspective (Ancient Wisdom)
+*   **Focus**: Answer based **ONLY** on the *Bhagavad Gita*.
+*   **Requirement**: You must include **2-3 citations** from the Gita.
+*   **Tone**: Profound, timeless, dharma-focused.
+
+### 2. The Scientific Perspective (Modern Strategy)
+*   **Focus**: Answer based on modern psychology/habit books (e.g., *Atomic Habits*, *Thinking Fast & Slow*,*Ikigai*, *The 7 habits of highly effective people).
+*   **Requirement**: You must include **3-4 citations** from these modern texts.
+*   **Tone**: Actionable, tactical, evidence-based.
+
 **STRICT CITATION RULES**:
-1.  **Inline Citations**: Every time you use an idea from a book, you MUST cite it immediately at the end of the sentence.
+1.  **Inline Citations**: Every time you use an idea, cite it immediately at the end of the sentence.
     *   Format: " ... idea from the text [Source: Atomic Habits, Ch 1]."
-2.  **Target Density**: Aim for **5-6 citations** in your response if the context supports it.
-3.  **Balance**:
-    *   Include at least **2 citations from Spiritual texts** (e.g. Gita).
-    *   Include the remainder from **Modern/Scientific texts** (e.g. Atomic Habits).
-4.  **References Section**: At the very end of your response, list the unique sources you used.
+2.  **References Section**: At the very end, list the unique sources used.
 
 **Relevance Check**:
-*   If the user asks about a general topic (coding, cooking) NOT in the books, politely state: "This topic is outside my library, but here is a general answer:" and DO NOT invent citations.
-
-**Tone**: Empathetic, wise, grounded.
+*   If the user asks about a general topic (coding, cooking) NOT in the books, politely state: "This topic is outside my library, but here is a general answer:" and follow the standard format as best as possible.
 """
 
 QUERY_GEN_PROMPT = (
-    "You are a helpful assistant that generates search queries based on a user's question.\n"
-    "Generate 3 search queries related to the following input query: {query}\n"
-    "1. The input query itself.\n"
-    "2. A query focused on scientific, psychological, or habit-building aspects of the topic.\n"
-    "3. A query focused on spiritual, philosophical, or dharma-related aspects of the topic.\n"
+    "You are an expert research assistant. Your goal is to generate 3 distinct search queries to maximize the retrieval of relevant information.\n"
+    "Input Query: {query}\n"
+    "Instructions:\n"
+    "1. Include the user's original query exactly as is.\n"
+    "2. Generate 2 additional queries that explore different angles, synonyms, or related concepts.\n"
+    "3. Ensure the queries are diverse and not just minor rephrasings.\n"
     "Output each query on a separate line."
 )
 
-# ... (previous imports)
+class LoggingPostprocessor(BaseNodePostprocessor):
+    """Custom Postprocessor to log nodes for debugging/inspection."""
+    label: str = "Nodes"
 
-# ... (SYSTEM_PROMPT and QUERY_GEN_PROMPT)
-
-# ... (imports)
-
-# ... (SYSTEM_PROMPT and QUERY_GEN_PROMPT)
+    def _postprocess_nodes(
+        self,
+        nodes: List[NodeWithScore],
+        query_bundle: Optional[object] = None,
+    ) -> List[NodeWithScore]:
+        print(f"\n--- LOG: {self.label} ({len(nodes)} retrieved) ---")
+        for i, node in enumerate(nodes[:5]):  # Print top 5 to avoid clutter
+            score = f"{node.score:.4f}" if node.score is not None else "None"
+            content_preview = node.node.get_content()[:100].replace('\n', ' ')
+            print(f"[{i+1}] Score: {score} | {content_preview}...")
+        if len(nodes) > 5:
+            print(f"... and {len(nodes) - 5} more.")
+        print("------------------------------------------------\n")
+        return nodes
 
 def get_chat_engine():
     if not PINECONE_API_KEY:
@@ -88,12 +110,19 @@ def get_chat_engine():
         query_gen_prompt=QUERY_GEN_PROMPT
     )
 
-    # 3. Rerank
+    # 3. Rerank & Logging
     node_postprocessors = []
+    
+    # Log BEFORE Re-ranking
+    node_postprocessors.append(LoggingPostprocessor(label="Retrieved (Pre-Rerank)"))
+
     if COHERE_API_KEY:
         # User requested keeping top_n=10
         cohere_rerank = CohereRerank(api_key=COHERE_API_KEY, top_n=10)
         node_postprocessors.append(cohere_rerank)
+        
+        # Log AFTER Re-ranking
+        node_postprocessors.append(LoggingPostprocessor(label="Selected (Post-Rerank)"))
 
     # 4. RAG Chat Engine
     chat_engine = ContextChatEngine.from_defaults(
