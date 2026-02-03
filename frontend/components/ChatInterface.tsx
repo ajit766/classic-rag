@@ -27,7 +27,7 @@ export default function ChatInterface() {
                     </div>
                     <div>
                         <h1 className="text-xl font-bold text-gray-900 dark:text-white">The Modern Sage</h1>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Science meets Spirit</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Modern Psychology meets Ancient Spirituality</p>
                     </div>
                 </div>
             </header>
