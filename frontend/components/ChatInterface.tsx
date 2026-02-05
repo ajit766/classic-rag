@@ -7,7 +7,7 @@ import clsx from 'clsx';
 
 export default function ChatInterface() {
     const { messages, input, handleInputChange, handleSubmit, isLoading, error } = useChat({
-        api: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/chat',
+        api: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1/chat',
         onError: (err) => console.error("Chat error:", err),
     });
 

@@ -4,7 +4,7 @@ This document provides a detailed technical breakdown of the "Modern Sage" RAG a
 
 ---
 
-## 1. Backend: Data Ingestion (`backend/ingest.py`)
+## 1. Backend: Data Ingestion (`backend/scripts/ingest.py`)
 
 **Purpose**: This script runs once (or on-demand) to process raw PDFs and load them into the Vector Database.
 
@@ -21,9 +21,9 @@ This document provides a detailed technical breakdown of the "Modern Sage" RAG a
 
 ---
 
-## 2. Backend: RAG Engine (`backend/rag_engine.py`)
+## 2. Backend: RAG Engine (`backend/app/services/rag_engine.py`)
 
-**Purpose**: The "Brain" of the application. It creates the Chat Engine that handles user queries, retrieval, and generation.
+**Purpose**: The "Brain" of the application, now refactored into a **Singleton Service** (`ChatService`). It manages the lifecycle of the Chat Engine, ensuring efficient initialization of Pinecone, LLMs, and Retrievers.
 
 ### Pipeline Steps & Configuration
 
@@ -63,12 +63,12 @@ We refine the broad pool of 30 chunks down to the absolute best ones.
 
 ---
 
-## 3. Backend: API Server (`backend/main.py`)
+## 3. Backend: API Server (`backend/app/main.py`)
 
 **Purpose**: Exposes the RAG logic as a REST API for the frontend.
 
 ### Endpoints
-*   `POST /api/chat`: The main endpoint.
+*   `POST /api/v1/chat`: The main endpoint.
     *   **Input**: JSON `{ messages: [...] }`.
     *   **Processing**: Converts the last user message into a query for `rag_engine`.
     *   **Response**: **Streaming Response** (Server-Sent Events).
@@ -89,7 +89,7 @@ We refine the broad pool of 30 chunks down to the absolute best ones.
 *   **State Management**: `useChat` hook handles `messages`, `input`, `isLoading`, and `error`.
 *   **API Connection**:
     *   **Production**: Uses `process.env.NEXT_PUBLIC_API_URL` (Points to Render).
-    *   **Development**: Defaults to `http://localhost:8000/api/chat`.
+    *   **Development**: Defaults to `http://localhost:8000/api/v1/chat`.
 *   **Rendering**:
     *   Markdown support via `react-markdown` (implied in usage, or standard text rendering).
     *   Auto-scrolling using `messagesEndRef`.

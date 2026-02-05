@@ -53,7 +53,9 @@ Also, a detailed codebase explanation is available at: [Codebase Explanation](do
 
 3.  **Run Backend**:
     ```bash
-    uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    ```bash
+    # Run the server from backend directory
+    uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     ```
 
 4.  **Run Frontend**:

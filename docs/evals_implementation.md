@@ -5,7 +5,7 @@ In RAG systems, "vibes" are insufficient. I implemented a quantitative evaluatio
 1.  **Faithfulness**: Is the answer hallucinated? (Does it strictly follow the retrieved context?)
 2.  **Relevancy**: Does the answer actually address the user's question?
 
-## 2. Implementation: `backend/evaluate.py`
+## 2. Implementation: `backend/evals/evaluate.py`
 Instead of manually writing test cases, I built a self-generating pipeline:
 
 ### The "Golden Dataset" Generation
@@ -25,7 +25,7 @@ Instead of manually writing test cases, I built a self-generating pipeline:
 | Metric | Score | Analysis |
 | :--- | :--- | :--- |
 | **Faithfulness** | **80%** | The system generally sticks to the text. Failures occur when the "Strict Dual-Perspective" prompt forces the LLM to invent a "Scientific" connection for a purely spiritual question. |
-| **Relevancy** | **80%** | High. The Fusion Retriever successfully finds the right context. Failures are mostly due to the "Dual-Perspective" preamble distracting the strict judge. |
+| **Relevancy** | **100%** | High. The Fusion Retriever successfully finds the right context. |
 
 ### Why 80%? (The "Strict Prompt" Trade-off)
 The current `SYSTEM_PROMPT` enforces a rigid structure:
@@ -33,4 +33,4 @@ The current `SYSTEM_PROMPT` enforces a rigid structure:
 
 *   **The Conflict**: If a user asks a purely technical question (e.g., "What is the study on Contextual Priming?"), the LLM is forced to also provide a "Spiritual Perspective."
 *   **The Verdict**: The strict judge flags this extra spiritual content as "Irrelevant" to the scientific question, lowering the score.
-*   **Next Step**: Relax the prompt to "Provide both perspectives **where applicable**" to improve automated scores, though this risks losing the "Modern Sage" persona consistency.
+*   **Next Step**: Relax the prompt to "Provide both perspectives **where applicable**" to improve automated scores, though this risks losing the "Modern Sage" persona consistency.(TBD)
