@@ -1,7 +1,7 @@
 
 from typing import Optional, List
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import AnyHttpUrl, validator
+from pydantic import AnyHttpUrl, validator, Field, AliasChoices
 
 class Settings(BaseSettings):
     # API Info
@@ -21,7 +21,7 @@ class Settings(BaseSettings):
 
     # External APIs
     OPENAI_API_KEY: str
-    PINECONE_API_KEY: str
+    PINECONE_API_KEY: str = Field(validation_alias=AliasChoices('PINECONE_API_KEY', 'PINECONE-API-KEY'))
     COHERE_API_KEY: Optional[str] = None
     
     # RAG Config
